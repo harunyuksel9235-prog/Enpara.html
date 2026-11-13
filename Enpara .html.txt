@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Enpara Cep Şube Clone</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Enpara">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #1e1e24;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --enpara-purple: #a64b9b;
+            --enpara-purple-light: #b85dae;
+            --enpara-bg-gray: #f2f2f4;
+            --enpara-border: #e2e2e6;
+            --enpara-text-dark: #3a3a3a;
+            --enpara-text-muted: #787878;
+            --enpara-green: #7cb342;
+            --enpara-orange: #fb8c00;
+            --enpara-blue: #039be5;
+        }
+
+        .phone-mockup {
+            width: 100%;
+            max-width: 412px;
+            height: 870px;
+            max-height: 100vh;
+            background: #ffffff;
+            border-radius: 0;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        @media (min-width: 450px) {
+            .phone-mockup {
+                border-radius: 36px;
+                border: 8px solid #2d2d35;
+                max-height: 98vh;
+            }
+        }
+
+        .color-stripe {
+            display: flex;
+            height: 4px;
+            width: 100%;
+        }
+        .stripe-1 { background-color: #a64b9b; width: 25%; }
+        .stripe-2 { background-color: #fb8c00; width: 25%; }
+        .stripe-3 { background-color: #7cb342; width: 25%; }
+        .stripe-4 { background-color: #039be5; width: 25%; }
+
+        .enpara-header {
+            background-color: #ffffff;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-bottom: 1px solid #eef0f2;
+        }
+
+        .enpara-header-title {
+            color: #666;
+            font-size: 19px;
+            font-weight: 400;
+            letter-spacing: -0.3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #ccc;
+        }
+
+        .section-header {
+            color: #a64b9b;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 12px 16px 8px 16px;
+        }
+
+        .warning-icon {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-bottom: 13px solid #ff9800;
+            position: relative;
+            margin-right: 4px;
+        }
+        .warning-icon::after {
+            content: '!';
+            position: absolute;
+            top: 1px;
+            left: -2px;
+            font-size: 9px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .wheel-container {
+            width: 290px;
+            height: 290px;
+            border-radius: 50%;
+            border: 2px solid #a64b9b;
+            position: relative;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wheel-center {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background-color: #a64b9b;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(166,75,155,0.4);
+            text-align: center;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-mockup">
+    <!-- Status Bar -->
+    <div class="bg-white text-gray-800 text-xs px-6 pt-3 pb-1 flex justify-between items-center font-medium shrink-0">
+        <span>11:12</span>
+        <div class="flex items-center space-x-1.5 text-[11px]">
+            <i class="fa-solid fa-signal"></i>
+            <i class="fa-solid fa-wifi"></i>
+            <span class="bg-black text-white text-[9px] px-1 rounded font-bold">46</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="enpara-header shrink-0">
+        <div class="flex items-center space-x-3">
+            <button id="back-button" onclick="navigateBack()" class="text-[#a64b9b] text-xl font-bold hidden">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button onclick="toggleDrawer()" class="text-[#a64b9b] text-xl">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        <div id="page-title" class="enpara-header-title">En Özet</div>
+        <div class="flex items-center space-x-3 text-[#a64b9b] text-xl">
+            <button onclick="openModal('Bildirimler', 'Okunmamış bildiriminiz bulunmamaktadır.')" class="relative">
+                <i class="fa-regular fa-bell"></i>
+                <span id="notif-badge" class="absolute -top-1 -right-1 bg-amber-500 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center font-bold">1</span>
+            </button>
+            <button onclick="openModal('Çözüm Merkezi', 'Enpara Çözüm Merkezi ile 7/24 iletişim kurabilirsiniz.')">
+                <i class="fa-regular fa-comment-dots"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Color Accent Line -->
+    <div class="color-stripe shrink-0">
+        <div class="stripe-1"></div>
+        <div class="stripe-2"></div>
+        <div class="stripe-3"></div>
+        <div class="stripe-4"></div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div id="main-view" class="flex-1 overflow-y-auto custom-scrollbar bg-[#f2f2f4]">
+        <!-- Dynamic Views Injected Here -->
+    </div>
+
+    <!-- Footer Action Buttons -->
+    <div id="footer-container" class="shrink-0 bg-white border-t border-gray-200">
+        <!-- Rendered dynamically -->
+    </div>
+
+    <!-- Slide-in Navigation Drawer -->
+    <div id="drawer-overlay" class="absolute inset-0 bg-black/40 z-50 hidden" onclick="toggleDrawer()">
+        <div class="w-72 h-full bg-white flex flex-col shadow-2xl" onclick="event.stopPropagation()">
+            <div class="p-4 bg-[#a64b9b] text-white flex justify-between items-center shrink-0">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">H</div>
+                    <div>
+                        <div class="font-bold text-sm">HARUN YÜKSEL</div>
+                        <div class="text-xs opacity-80">Müşteri No: 3733353</div>
+                    </div>
+                </div>
+                <button onclick="toggleDrawer()" class="text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto py-1 text-sm text-gray-700 divide-y divide-gray-100 custom-scrollbar">
+                <div onclick="switchScreen('home')" class="flex justify-between items-center px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                    <span class="font-medium text-gray-800">En Özet</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </div>
+                <div onclick="switchScreen('fastList')" class="flex justify-between items-center px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                    <span class="text-gray-700">En Hızlı</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </div>
+                <div onclick="switchScreen('accounts')" class="flex justify-between items-center px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                    <span class="text-gray-700">Hesaplar</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </div>
+                <div onclick="switchScreen('creditCard')" class="flex justify-between items-center px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                    <span class="text-gray-700">Kredi kartı</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </div>
+                <div onclick="switchScreen('credits')" class="flex justify-between items-center px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                    <span class="text-gray-700">Krediler</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </div>
+                <div onclick="switchScreen('transactions')" class="flex justify-between items-center px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                    <span class="text-gray-700">Hesap Hareketleri</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </div>
+                <div onclick="switchScreen('landing')" class="flex justify-between items-center px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                    <span class="text-gray-700">Çıkış</span>
+                    <i class="fa-solid fa-power-off text-xs text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="app-modal" class="absolute inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl p-5 w-full max-w-xs text-center shadow-xl">
+            <div id="modal-title" class="font-bold text-gray-800 text-base mb-1">Bilgi</div>
+            <div id="modal-body" class="text-xs text-gray-600 mb-5">Mesaj</div>
+            <button onclick="closeModal()" class="w-full bg-[#a64b9b] text-white py-2.5 rounded-xl font-medium text-sm">Anladım</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentScreen = 'home';
+
+    const data = {
+        vadesizTL: "-14.920,15 TL",
+        krediKarti: {
+            sonEkstreBorcu: "94.724,41 TL",
+            sonOdemeTarihi: "09/11/2026",
+            kalanBorc: "94.724,41 TL",
+            minimumOdeme: "0,00 TL",
+            ekstreKesimTarihi: "30/11/2026",
+            toplamLimit: "150.000,00 TL",
+            kullanilabilirLimit: "37.596,22 TL",
+            guncelDonemBorcu: "110.900,41 TL",
+            provizyon: "201,57 TL",
+            gelecekTaksitler: "3.497,87 TL",
+            toplamBorc: "114.599,85 TL"
+        },
+        krediler: [],
+        enHizliKayitlar: [
+            { ad: "Abim yapı kredi hesabı", detay: "Abim Yapı Kredi Hesabı, YAPI VE KREDİ BANKASI A.Ş." },
+            { ad: "Abimin en para hesabı", detay: "E*** Y*****, ENPARA BANK A.Ş." },
+            { ad: "Abimin yapı kredi hesabı", detay: "Enis Yüksel, YAPI VE KREDİ BANKASI A.Ş." },
+            { ad: "Burcu en para hesabı", detay: "R***** B***** Y*****, ENPARA BANK A.Ş." },
+            { ad: "Burcum denizbank hesap", detay: "Rabia Burcu Tokgöz, DENİZBANK A.Ş." },
+            { ad: "Dağdibi daire sahibi", detay: "Dağdibi Daire Sahibi, TÜRKİYE GARANTİ BANKASI A.Ş." },
+            { ad: "Filiz yenge teb bankası", detay: "Filiz Yüksel, TÜRK EKONOMİ BANKASI A.Ş." },
+            { ad: "Harun garanti bankası", detay: "Harun Yüksel, TÜRKİYE GARANTİ BANKASI A.Ş." },
+            { ad: "Samet paşaoğlu", detay: "S**** P*******, ENPARA BANK A.Ş." }
+        ],
+        hesapHareketleri: [
+            { tarih: "13/11/2026", aciklama: "Kredi kartı - MIGROS-MJET ERENLER MAH. SAKARYA TR", tutar: "-360,00 TL", isKart: true },
+            { tarih: "11/11/2026", aciklama: "Kredi kartı - MIGROS-MJET ERENLER MAH.S", tutar: "-360,00 TL", isKart: true },
+            { tarih: "11/11/2026", aciklama: "Kredi kartı - KORAY BAYGIN UNLU MAMÜL", tutar: "-175,00 TL", isKart: true },
+            { tarih: "06/11/2026", aciklama: "Vadesiz TL - Ödeme - Aksa Sakarya DGaz Tüketim Bedeli...", tutar: "-2.580,00 TL" },
+            { tarih: "06/11/2026", aciklama: "Vadesiz TL - Gelen Transfer - HARUN YÜKSEL, Bireysel Ödeme", tutar: "+2.600,00 TL", isIncome: true }
+        ]
+    };
+
+    function switchScreen(screen) {
+        currentScreen = screen;
+        const main = document.getElementById('main-view');
+        const footer = document.getElementById('footer-container');
+        const title = document.getElementById('page-title');
+        const backBtn = document.getElementById('back-button');
+
+        backBtn.classList.toggle('hidden', screen === 'landing');
+        footer.innerHTML = '';
+        toggleDrawer(true);
+
+        if (screen === 'landing') {
+            title.textContent = "Cep Şube giriş";
+            renderLanding(main);
+        } else if (screen === 'home') {
+            title.textContent = "En Özet";
+            renderHome(main);
+        } else if (screen === 'accounts') {
+            title.textContent = "Hesaplar";
+            renderAccounts(main, footer);
+        } else if (screen === 'creditCard') {
+            title.textContent = "Kredi kartı";
+            renderCreditCard(main, footer);
+        } else if (screen === 'credits') {
+            title.textContent = "Krediler";
+            renderCredits(main, footer);
+        } else if (screen === 'transactions') {
+            title.textContent = "Hesap hareketleri";
+            renderTransactions(main, footer);
+        } else if (screen === 'fastList') {
+            title.textContent = "En Hızlı";
+            renderFastList(main, footer);
+        } else if (screen === 'cardStatement') {
+            title.textContent = "Güncel dönem borcu";
+            renderCardStatement(main, footer);
+        }
+    }
+
+    function navigateBack() {
+        if (currentScreen === 'cardStatement') {
+            switchScreen('creditCard');
+        } else {
+            switchScreen('home');
+        }
+    }
+
+    function renderLanding(container) {
+        container.innerHTML = `
+            <div class="bg-white min-h-full flex flex-col justify-between p-4">
+                <div class="text-center pt-4">
+                    <img src="https://placehold.co/140x50/white/a64b9b?text=en+para" alt="Enpara" class="h-10 mx-auto">
+                </div>
+                <div class="wheel-container">
+                    <div class="wheel-center" onclick="switchScreen('home')">
+                        <i class="fa-solid fa-power-off text-3xl mb-1"></i>
+                        <span class="font-bold text-xs">Cep Şube<br>giriş</span>
+                    </div>
+                </div>
+                <div class="text-center text-[10px] text-gray-400 pb-2">Enpara Bank A.Ş. bir QNB Group (Q.P.S.C.) iştirakidir.</div>
+            </div>
+        `;
+    }
+
+    function renderHome(container) {
+        container.innerHTML = `
+            <div class="bg-white border-y border-gray-200 mt-2">
+                <div onclick="switchScreen('accounts')" class="px-4 py-3 flex justify-between items-center cursor-pointer">
+                    <span class="section-header p-0">Hesaplar</span>
+                    <div class="flex items-center space-x-1">
+                        <span class="text-sm font-bold text-[#a64b9b]">${data.vadesizTL}</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                    </div>
+                </div>
+                <div onclick="switchScreen('accounts')" class="px-4 py-2.5 flex justify-between items-center border-t border-gray-100 text-xs text-gray-700 cursor-pointer">
+                    <span>Vadesiz TL</span>
+                    <span class="font-medium text-gray-900">${data.vadesizTL}</span>
+                </div>
+            </div>
+
+            <div class="bg-white border-y border-gray-200 mt-2">
+                <div onclick="switchScreen('creditCard')" class="px-4 py-3 flex justify-between items-center cursor-pointer">
+                    <span class="section-header p-0">Kredi kartı</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </div>
+                <div class="divide-y divide-gray-100 text-xs text-gray-700">
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Son ekstreden kalan borç</span>
+                        <div class="flex items-center space-x-1 font-semibold text-gray-800">
+                            <span class="warning-icon"></span>
+                            <span>${data.krediKarti.kalanBorc}</span>
+                        </div>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Son ödeme tarihi</span>
+                        <span class="font-medium text-gray-800">${data.krediKarti.sonOdemeTarihi}</span>
+                    </div>
+                    <div onclick="switchScreen('cardStatement')" class="px-4 py-2.5 flex justify-between items-center cursor-pointer hover:bg-gray-50">
+                        <span class="flex items-center text-[#a64b9b] font-medium">Güncel dönem borcu <i class="fa-regular fa-circle-question ml-1 text-gray-400"></i></span>
+                        <span class="font-bold text-[#a64b9b]">${data.krediKarti.guncelDonemBorcu}</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Kullanılabilir limit</span>
+                        <div class="flex items-center space-x-1 font-semibold text-gray-800">
+                            <span class="warning-icon"></span>
+                            <span>${data.krediKarti.kullanilabilirLimit}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white border-y border-gray-200 mt-2 mb-6">
+                <div onclick="switchScreen('transactions')" class="px-4 py-3 flex justify-between items-center cursor-pointer">
+                    <span class="section-header p-0">Son işlemlerim</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </div>
+                <div class="divide-y divide-gray-100 text-xs">
+                    ${data.hesapHareketleri.slice(0, 3).map(item => `
+                        <div class="px-4 py-2.5 flex justify-between items-center">
+                            <div>
+                                <div class="text-gray-400 text-[10px]">${item.tarih}</div>
+                                <div class="text-gray-800 font-medium truncate max-w-[210px]">${item.aciklama}</div>
+                            </div>
+                            <span class="font-bold ${item.isIncome ? 'text-green-600' : 'text-gray-800'}">${item.tutar}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderAccounts(container, footer) {
+        container.innerHTML = `
+            <div class="bg-white border-b px-4 py-3 flex justify-between items-center text-sm font-bold border-gray-200">
+                <span class="text-[#a64b9b]">Toplam</span>
+                <span class="text-[#a64b9b]">${data.vadesizTL}</span>
+            </div>
+            <div class="bg-white border-b border-gray-200 px-4 py-3 mt-2 cursor-pointer" onclick="switchScreen('transactions')">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="font-bold text-gray-800 text-sm">Vadesiz TL</div>
+                        <div class="text-[11px] text-gray-400 mt-1">TR31 0015 7000 0000 0093 9987 68</div>
+                    </div>
+                    <div class="text-right flex items-center space-x-1">
+                        <span class="font-bold text-sm text-gray-800">${data.vadesizTL}</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+        footer.innerHTML = `
+            <div class="grid grid-cols-2 text-center text-white text-xs font-semibold">
+                <button onclick="openModal('Yeni Hesap', 'Yeni hesap açılışı.')" class="bg-[#a64b9b] py-3.5 border-r border-white/20">Yeni hesap aç</button>
+                <button onclick="openModal('Faiz Oranları', 'Mevduat faiz oranları.')" class="bg-[#a64b9b] py-3.5">Mevduat faiz oranlarımız</button>
+            </div>
+        `;
+    }
+
+    function renderCreditCard(container, footer) {
+        container.innerHTML = `
+            <div class="flex border-b text-xs font-medium text-center bg-white">
+                <div class="flex-1 py-3 text-[#7cb342] border-b-2 border-[#7cb342] font-bold">Kart ve limit bilgileri</div>
+                <div onclick="switchScreen('cardStatement')" class="flex-1 py-3 text-gray-500 cursor-pointer">Ekstre gözlem</div>
+            </div>
+            <div class="bg-white border-y border-gray-200 mt-2">
+                <div class="section-header">Son ekstre</div>
+                <div class="divide-y divide-gray-100 text-xs text-gray-700">
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Son ekstre borcu</span>
+                        <span class="font-medium text-gray-800">${data.krediKarti.sonEkstreBorcu}</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Son ödeme tarihi</span>
+                        <span class="font-medium text-gray-800">${data.krediKarti.sonOdemeTarihi}</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Son ekstreden kalan borç</span>
+                        <div class="flex items-center space-x-1 font-semibold text-gray-800">
+                            <span class="warning-icon"></span>
+                            <span>${data.krediKarti.kalanBorc}</span>
+                        </div>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Kalan minimum ödeme tutarı</span>
+                        <span class="font-medium text-gray-800">${data.krediKarti.minimumOdeme}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border-y border-gray-200 mt-2 mb-4">
+                <div class="section-header">Güncel durum</div>
+                <div class="divide-y divide-gray-100 text-xs text-gray-700">
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Ekstre kesim tarihi</span>
+                        <span class="font-medium text-gray-800">${data.krediKarti.ekstreKesimTarihi}</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Toplam limit</span>
+                        <span class="font-medium text-gray-800">${data.krediKarti.toplamLimit}</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Kullanılabilir limit</span>
+                        <div class="flex items-center space-x-1 font-semibold text-gray-800">
+                            <span class="warning-icon"></span>
+                            <span>${data.krediKarti.kullanilabilirLimit}</span>
+                        </div>
+                    </div>
+                    <div onclick="switchScreen('cardStatement')" class="px-4 py-2.5 flex justify-between items-center cursor-pointer hover:bg-gray-50">
+                        <span class="text-[#a64b9b] font-medium">Güncel dönem borcu</span>
+                        <span class="font-bold text-[#a64b9b]">${data.krediKarti.guncelDonemBorcu}</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Provizyondaki işlemler</span>
+                        <span class="font-medium text-gray-800">${data.krediKarti.provizyon}</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center">
+                        <span>Gelecek dönem taksitleri</span>
+                        <span class="font-medium text-gray-800">${data.krediKarti.gelecekTaksitler}</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex justify-between items-center font-bold bg-purple-50">
+                        <span class="text-[#a64b9b]">Toplam borç</span>
+                        <span class="text-[#a64b9b]">${data.krediKarti.toplamBorc}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        footer.innerHTML = `
+            <div class="grid grid-cols-3 text-center text-white text-[11px] font-semibold">
+                <button onclick="openModal('Taksitlendir', 'Harcama taksitlendirme.')" class="bg-[#a64b9b] py-3.5 border-r border-white/20">Harcama taksitlendir</button>
+                <button onclick="openModal('Nakit Avans', 'Nakit avans talebi.')" class="bg-[#a64b9b] py-3.5 border-r border-white/20">Nakit avans kullan</button>
+                <button onclick="openModal('Ödeme', 'Ödeme ekranı.')" class="bg-[#a64b9b] py-3.5">Ödeme yap</button>
+            </div>
+        `;
+    }
+
+    function renderCardStatement(container, footer) {
+        container.innerHTML = `
+            <div class="flex border-b text-xs font-medium text-center bg-white">
+                <div class="flex-1 py-3 text-[#7cb342] border-b-2 border-[#7cb342] font-bold">Kategoriye göre</div>
+                <div class="flex-1 py-3 text-gray-500">Tarihe göre</div>
+            </div>
+            <div class="bg-white border-b border-gray-200">
+                <div class="px-4 py-3 flex justify-between items-center border-b border-gray-100">
+                    <div>
+                        <div class="font-bold text-gray-800 text-xs">Son ekstre borcu</div>
+                        <div class="text-[10px] text-gray-400">Ekstre tarihi: 30/10/2026</div>
+                    </div>
+                    <span class="font-bold text-[#a64b9b] text-sm">${data.krediKarti.sonEkstreBorcu}</span>
+                </div>
+                <div class="px-4 py-3 flex justify-between items-center border-b border-gray-100 text-xs">
+                    <span class="text-gray-700">Dönem içi yapılan ödemeler</span>
+                    <span class="font-bold text-[#a64b9b]">0,00 TL</span>
+                </div>
+                <div class="px-4 py-3 flex justify-between items-center border-b border-gray-100 text-xs">
+                    <span class="text-gray-700">Dönem içi harcamalar ve yansıyan borçlar</span>
+                    <span class="font-bold text-[#a64b9b]">16.176,00 TL</span>
+                </div>
+                <div class="pl-8 pr-4 py-2 flex justify-between items-center border-b border-gray-100 text-xs text-gray-600 bg-gray-50">
+                    <span>Geçmiş dönemlerden yansıyan taksitler</span>
+                    <span>2.262,71 TL</span>
+                </div>
+                <div class="pl-8 pr-4 py-2 flex justify-between items-center border-b border-gray-100 text-xs text-gray-600 bg-gray-50">
+                    <span>Dönem içi harcamalar</span>
+                    <span>11.717,26 TL</span>
+                </div>
+                <div class="pl-8 pr-4 py-2 flex justify-between items-center border-b border-gray-100 text-xs text-gray-600 bg-gray-50">
+                    <span>Faiz, vergiler ve ücretler</span>
+                    <span>2.196,03 TL</span>
+                </div>
+            </div>
+            <div class="bg-[#fcebf9] px-4 py-3 flex justify-between items-center border-y border-purple-200 mt-2">
+                <span class="font-bold text-[#a64b9b] text-xs">Güncel dönem toplam borcu</span>
+                <span class="font-bold text-[#a64b9b] text-sm">${data.krediKarti.guncelDonemBorcu}</span>
+            </div>
+        `;
+        footer.innerHTML = `
+            <div class="grid grid-cols-2 text-center text-white text-xs font-semibold">
+                <button onclick="openModal('E-posta', 'Ekstre e-postanıza gönderildi.')" class="bg-[#a64b9b] py-3.5 border-r border-white/20">Kendime e-posta gönder</button>
+                <button onclick="openModal('Paylaş', 'Ekstre paylaşıldı.')" class="bg-[#a64b9b] py-3.5">Paylaş</button>
+            </div>
+        `;
+    }
+
+    function renderCredits(container, footer) {
+        container.innerHTML = `
+            <div class="bg-white border-y border-gray-200 p-6 text-center text-xs text-gray-500">
+                Aktif veya sonuçlanmış krediniz bulunmamaktadır.
+            </div>
+        `;
+    }
+
+    function renderFastList(container, footer) {
+        container.innerHTML = `
+            <div class="p-2 bg-white border-b">
+                <input type="text" placeholder="En Hızlı kayıt adı ile ara" class="w-full bg-gray-100 border border-gray-200 rounded px-3 py-2 text-xs text-gray-700 outline-none">
+            </div>
+            <div class="bg-white border-y border-gray-200 divide-y divide-gray-100 text-xs">
+                ${data.enHizliKayitlar.map(item => `
+                    <div class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-gray-50" onclick="openModal('${item.ad}', 'Transfer başlatılıyor...')">
+                        <div>
+                            <div class="font-bold text-gray-800">${item.ad}</div>
+                            <div class="text-[10px] text-gray-400 mt-0.5">${item.detay}</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        footer.innerHTML = `
+            <div class="p-3 bg-white">
+                <button onclick="openModal('Yeni Kayıt', 'Yeni kayıt ekleme ekranı.')" class="w-full bg-[#a64b9b] text-white py-3 rounded-lg font-medium text-xs">Yeni kayıt ekle</button>
+            </div>
+        `;
+    }
+
+    function renderTransactions(container, footer) {
+        container.innerHTML = `
+            <div class="p-2 bg-white border-b">
+                <input type="text" placeholder="Hareket tipi veya açıklama ile ara" class="w-full bg-gray-100 border border-gray-200 rounded px-3 py-2 text-xs text-gray-700 outline-none">
+            </div>
+            <div class="bg-white border-y border-gray-200 divide-y divide-gray-100 text-xs">
+                ${data.hesapHareketleri.map(item => `
+                    <div class="p-3.5 flex justify-between items-center">
+                        <div>
+                            <div class="text-gray-400 text-[10px]">${item.tarih}</div>
+                            <div class="text-gray-800 font-medium mt-0.5 max-w-[240px] truncate">${item.aciklama}</div>
+                        </div>
+                        <span class="font-bold ${item.isIncome ? 'text-green-600' : 'text-gray-800'} text-xs">${item.tutar}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        footer.innerHTML = `
+            <div class="grid grid-cols-2 text-center text-white text-xs font-semibold">
+                <button onclick="openModal('E-posta', 'Hesap hareketleri gönderildi.')" class="bg-[#a64b9b] py-3.5 border-r border-white/20">Kendime e-posta gönder</button>
+                <button onclick="openModal('Paylaş', 'Paylaşıldı.')" class="bg-[#a64b9b] py-3.5">Paylaş</button>
+            </div>
+        `;
+    }
+
+    function openModal(title, message) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-body').textContent = message;
+        document.getElementById('app-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('app-modal').classList.add('hidden');
+    }
+
+    function toggleDrawer(forceClose = false) {
+        const drawer = document.getElementById('drawer-overlay');
+        if (forceClose) {
+            drawer.classList.add('hidden');
+        } else {
+            drawer.classList.toggle('hidden');
+        }
+    }
+
+    window.onload = function() {
+        switchScreen('home');
+    };
+</script>
+</body>
+</html>
